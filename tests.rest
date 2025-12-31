@@ -1,0 +1,29 @@
+### Pobierz listę filmów
+GET http://localhost:5050/api/movies
+
+### Dodaj film
+POST http://localhost:5050/api/movies
+Content-Type: application/json
+
+{
+    "title": "Biedne istoty",
+    "year": 2014
+}
+
+### Dodaj ocenę
+POST http://localhost:5050/api/ratings
+Content-Type: application/json
+
+{
+    "movie_id": 1,
+    "score": 5
+}
+
+### Dodaj ocenę (BŁĄD - walidacja score)
+POST http://localhost:5050/api/ratings
+Content-Type: application/json
+
+{
+    "movie_id": 1,
+    "score": 10
+}

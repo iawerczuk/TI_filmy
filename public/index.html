@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking filmów</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header>
+    <div class="brand">Ranking filmów</div>
+</header>
+
+<main>
+    <section>
+        <p class="muted">Dodaj nowy film</p>
+        <form id="movieForm" class="add-form">
+            <input type="text" id="title" placeholder="Tytuł" required>
+            <input type="number" id="year" placeholder="Rok wydania" required>
+            <button type="submit">DODAJ</button>
+        </form>
+    </section>
+
+    <h2 style="color: var(--accent)">Ranking Filmów</h2>
+    <div id="movieList" class="board">
+        </div>
+</main>
+
+<script>
+    async function loadMovies() {
+        const res = await fetch('/api/movies');
+        const movies = await res.json();
+        const container = document.getElementById('movieList');
+        
+        container.innerHTML = movies.map(m => `
+            <div class="card">
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">${m.title}</div>
+                <div class="muted">Premiera: ${m.year}</div>
+                <div style="color: var(--accent); font-weight: 800; margin: 10px 0;">
+                    ⭐ ${m.avg_score || '0.00'} <span class="muted">(${m.votes} ocen)</span>
+                </div>
+                <div class="muted" style="font-size: 11px; margin-bottom: 5px;">WYSTAW OCENĘ:</div>
+                <div class="rating-buttons">
+                    ${[1,2,3,4,5].map(num => `
+                        <button onclick="addRating(${m.id}, ${num})">${num}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function addRating(movieId, score) {
+    const response = await fetch('/api/ratings', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+            movie_id: parseInt(movieId), 
+            score: parseInt(score) 
+        })
+    });
+
+    if (response.ok) {
+        loadMovies();
+    } else {
+        const err = await response.json();
+        alert("Błąd: " + err.error);
+    }
+    }
+
+    document.getElementById('movieForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const year = document.getElementById('year').value;
+        await fetch('/api/movies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, year })
+        });
+        e.target.reset();
+        loadMovies();
+    };
+
+    loadMovies();
+</script>
+</body>
+</html>
