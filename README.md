@@ -37,8 +37,3 @@ Działa pod adresem:
 ## Testowanie
 Plik `tests.rest` zawiera przykładowe wywołania endpointów API.
 Testy wykonano przy użyciu VS Code – rozszerzenie **REST Client**.
-
-### Scenariusze testowe:
-* **Poprawne dodanie danych (happy path)**: dodanie filmu, wystawienie kilku ocen i sprawdzenie aktualizacji rankingu.
-* **Walidacja błędów**: próba wysłania oceny spoza zakresu (1–5) oraz brakujących danych.
-* **Integracja**: dynamiczne odświeżanie średniej i liczby głosów w interfejsie bez restartu aplikacji.
